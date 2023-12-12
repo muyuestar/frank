@@ -28,7 +28,7 @@ public class ImageOperation {
 		 System.out.println("¿ªÊ¼Í¼Æ¬²Ã¼ô");
 		 String originalImagePath = "E:\\1.jpg";
 		 String clipImagePath = "E:\\2.jpg";
-		 int[] array = ImageUtils.getImageWidthAndLength(originalImagePath);
+		 int[] array = ImageUtils.getImageWidthAndHeight(originalImagePath);
 		 System.out.println(Arrays.toString(array));
 		 ImageUtils.clipImage(originalImagePath, clipImagePath, 0, 257,
 		 array[0], array[1] - 1);

@@ -26,9 +26,9 @@ public class CodecUtils {
 //		System.out.println(new String(byteString,"utf-8"));
 
 		// 2.MD5
-//		String data = "晚上好";
-//		String md5String = DigestUtils.md5Hex(data);
-//		System.out.println(md5String);
+		String data = "晚上好";
+		String md5String = DigestUtils.md5Hex(data);
+		System.out.println(md5String);
 
 		// 3.URL
 //		byte[] bytes = "https://www.baidu.com/".getBytes("utf-8");

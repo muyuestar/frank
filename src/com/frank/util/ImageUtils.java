@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -59,7 +60,7 @@ public class ImageUtils {
 	 * @throws IOException
 	 * @author kst,20210909
 	 */
-	public static int[] getImageWidthAndLength(String imagePath) throws IOException {
+	public static int[] getImageWidthAndHeight(String imagePath) throws IOException {
 		File file = new File(imagePath);
 		BufferedImage image = ImageIO.read(file);
 		return new int[] { image.getWidth(), image.getHeight() };
@@ -296,8 +297,7 @@ public class ImageUtils {
 			e.printStackTrace();
 		}
 		// 对字节数组Base64编码
-		BASE64Encoder encoder = new BASE64Encoder();
-		return encoder.encode(data);
+		return  Base64.getEncoder().encodeToString(data);
 	}
 
 	/**
@@ -514,11 +514,11 @@ public class ImageUtils {
 //		zoomImage("C:/kang/image/15.jpg", "C:/kang/image/16.jpg", 1080, 720);
 
 		// 8.图片添加文字水印
-		String originalImagePath = "C:/kang/image/17.jpg";
-		String markImagePath = "C:/kang/image/17_fb.jpg";
-		boolean flag = ImageUtils.imageAddStringMark(originalImagePath, markImagePath, "0202  温州分行营业部  张三  02021", 250,
-				30);
-		System.out.println(flag);
+//		String originalImagePath = "C:/kang/image/17.jpg";
+//		String markImagePath = "C:/kang/image/17_fb.jpg";
+//		boolean flag = ImageUtils.imageAddStringMark(originalImagePath, markImagePath, "0202  温州分行营业部  张三  02021", 250,
+//				30);
+//		System.out.println(flag);
 
 		// 9.图片添加文字水印
 //		String srcImagePath = "C:/kang/image/mark.png";
@@ -532,6 +532,10 @@ public class ImageUtils {
 //		String targerImagePath = "C:/kang/image/mark_fb.png";
 //		String str = "床前明月光";
 //		imageAddStringMark(srcImagePath, targerImagePath, str);
-	}
+
+        //
+        String imgFilePath = "C:/kang/image/addImage/1_scale.jpg";
+        System.out.println(encodeImage(imgFilePath));
+    }
 
 }

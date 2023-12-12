@@ -1,13 +1,9 @@
 package com.frank.json;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Stream;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.alibaba.fastjson.JSON;
@@ -23,64 +19,77 @@ import com.google.gson.GsonBuilder;
 /**
  * json相关 https://blog.csdn.net/qq_29072049/article/details/89514268
  * https://www.cnblogs.com/kaixinyufeng/p/8323803.html
- * 
- * @author kst 20210902
  *
+ * @author kst 20210902
  */
 public class FastJsonDemo {
 
-	public static void main(String[] args) {
-		// 1.json数组字符串——>数组
-//		String str = "[{'page':'0','imgInfo':'/home/afa/seal.png','coordX':'0','coordY':'200','coordType':'1','scaleVal':'0.5'},{'page':'1','imgInfo':'/home/afa/seal1.png','coordX':'10','coordY':'300','coordType':'2','scaleVal':'0.8'}]";
-//		JSONArray array = JSON.parseArray(str);
-//		System.out.println(array.get(1));
-//		System.out.println(array.toJSONString());
+    public static void main(String[] args) {
+        // 1.json数组字符串——>数组
+//        String str = "[{'page':'0','imgInfo':'/home/afa/seal.png','coordX':'0','coordY':'200','coordType':'1','scaleVal':'0.5'},{'page':'1','imgInfo':'/home/afa/seal1.png','coordX':'10','coordY':'300','coordType':'2','scaleVal':'0.8'}]";
+//        JSONArray array = JSON.parseArray(str);
 
-		// 2.map——>json
-//		Map<String, String> map = new HashMap<String, String>();
-//		map.put("page", "0");
-//		map.put("coordX", "10");
-//		map.put("coordY", "20");
-//		String json = JSON.toJSONString(map);
-//		System.out.println(json);
+//        System.out.println(array.get(0));
+//        System.out.println(array.toJSONString());
+//        System.out.println(array);
 
-		// 3.json——>map
-		// 3.1
+        // 2.map——>json
+//        Map<String, String> map = new HashMap<String, String>();
+//        map.put("page", "0");
+//        map.put("coordX", "10");
+//        map.put("coordY", "20");
+//        String json = JSON.toJSONString(map, SerializerFeature.PrettyFormat);
+//        System.out.println(json);
+
+        // 3.json——>map
+        // 3.1
 //		String jsonStr = "{\"coordX\":\"10\",\"coordY\":\"20\",\"page\":\"0\"}";
 //		Map<String, String> map = (Map<String, String>) JSON.parse(jsonStr);
 //		System.out.println(map);
 //		System.out.println(map.get("coordX"));
 
-		// 3.2
+        // 3.2
 //		String jsonStr = "{\"coordX\":\"10\",\"coordY\":\"20\",\"page\":\"0\"}";
 //		Map<String, Object> map = JSON.parseObject(jsonStr);
 //		System.out.println(map);
 
-		// 3.3
-		String jsonStr = "{\"coordX\":\"10\",\"coordY\":\"罗永进		垫付车款\",\"fy\":\"罗永进\t\t垫付车款\"}";
-		Map<String, String> map = JSON.parseObject(jsonStr, Map.class);
-		System.out.println(map);
+        // 3.3
+//		String jsonStr = "{\"coordX\":\"10\",\"coordY\":\"罗永进		垫付车款\",\"fy\":\"罗永进\t\t垫付车款\"}";
+//		Map<String, String> map = JSON.parseObject(jsonStr, Map.class);
+//		System.out.println(map);
 
-		// 3.4
+        // 3.4
 //		String jsonStr = "{\"coordX\":\"10\",\"coordY\":\"20\",\"page\":\"0\"}";
 //		Map<String, String> map = (Map<String, String>) JSONObject.parse(jsonStr);
 //		System.out.println(map);
 
-		// 4.list——>JSONArray
-//		List<User> list = Lists.newArrayList();
-//		User user = new User();
-//		user.setAge("10");
-//		user.setName("张三");
-//		user.setAddress("浙江杭州");
-//		list.add(user);
-//		JSONArray jsonArray = JSONArray.parseArray(JSON.toJSONString(list));
-//		System.out.println(jsonArray);
+        // 4.list——>JSONArray
+        List<User> list = Lists.newArrayList();
+        User user = new User();
+        user.setAge("10");
+        user.setName("张三");
+        user.setAddress("浙江杭州");
+        list.add(user);
 
-		// 5.JSONArray——>list
-//		List<User> userList = JSONObject.parseArray(jsonArray.toJSONString(), User.class);
-//		System.out.println(userList.isEmpty());
+        User user1 = new User();
+        user1.setAge("12");
+        user1.setName("李四");
+        user1.setAddress("浙江温州");
+        list.add(user1);
 
-		// 6.生成多节点复杂的jsonDemo1
+        JSONArray jsonArray = JSONArray.parseArray(JSON.toJSONString(list));
+        System.out.println(jsonArray);
+
+        // 5.JSONArray——>list
+//        List<User> userList = JSONObject.parseArray(jsonArray.toJSONString(), User.class);
+//        System.out.println(userList.isEmpty());
+
+        // 6.JSONArray——>map
+//        List<Map> listMap = JSONObject.parseArray(jsonArray.toJSONString(), Map.class);
+//        listMap.forEach(map -> System.out.println(map));
+
+
+        // 7.生成多节点复杂的jsonDemo1
 //		JSONObject rootObject = new JSONObject();
 //		Bupps bupps = new Bupps();
 //		Req req = new Req();
@@ -97,7 +106,7 @@ public class FastJsonDemo {
 //		String json = rootObject.toJSONString();
 //		System.out.println(json);
 
-		// 7.生成多节点复杂的jsonDemo2
+        // 8.生成多节点复杂的jsonDemo2
 //		Root root = new Root();
 //		Bupps bupps = new Bupps();
 //		Req req = new Req();
@@ -115,7 +124,7 @@ public class FastJsonDemo {
 //		String json = JSON.toJSONString(root, SerializerFeature.PrettyFormat);
 //		System.out.println(json);
 
-		// 8.生成多节点复杂的jsonDemo3
+        // 9.生成多节点复杂的jsonDemo3
 //		Root root = new Root();
 //		Bupps bupps = new Bupps();
 //		Req req = new Req();
@@ -129,11 +138,11 @@ public class FastJsonDemo {
 //		req.setBody(body);
 //		bupps.setReq(req);
 //		root.setBupps(bupps);
-//		String json = JSON.toJSONString(root,SerializerFeature.PrettyFormat,SerializerFeature.WriteMapNullValue);
+////		String json = JSON.toJSONString(root,SerializerFeature.PrettyFormat,SerializerFeature.WriteMapNullValue);
 //		String json = JSON.toJSONString(root, SerializerFeature.PrettyFormat);
 //		System.out.println(json);
 
-		// 9.生成多节点复杂的jsonDemo4
+        // 10.生成多节点复杂的jsonDemo4
 //		JSONObject jsonObject = new JSONObject();
 //		JSONObject reqObject = new JSONObject();
 //		
@@ -156,7 +165,7 @@ public class FastJsonDemo {
 //		String json = JSON.toJSONString(jsonObject, SerializerFeature.PrettyFormat);
 //		System.out.println(json);
 
-		// 10.生成多节点复杂的jsonDemo5
+        // 11.生成多节点复杂的jsonDemo5
 //		JSONObject jsonObject = new JSONObject();
 //		JSONObject reqObject = new JSONObject();
 //
@@ -179,7 +188,7 @@ public class FastJsonDemo {
 //		String json = JSON.toJSONString(jsonObject, SerializerFeature.PrettyFormat);
 //		System.out.println(json);
 
-		// 11.解析多节点复杂json
+        // 12.解析多节点复杂json
 //		Map<String, String> responseMap = new LinkedHashMap<>();
 //		String[] headArray = new String[] { "channel", "branch", "teller" };
 //		String[] bodyArray = new String[] { "addWord", "appointFlag" };
@@ -202,7 +211,7 @@ public class FastJsonDemo {
 //		}
 //		System.out.println(responseMap);
 
-		// 12.数组中装map——>json
+        // 13.数组中装map——>json
 //		JSONObject jsonObject = new JSONObject();
 //		jsonObject.put("bankFlag", "1");
 
@@ -218,7 +227,7 @@ public class FastJsonDemo {
 //		String json = JSON.toJSONString(jsonObject);
 //		System.out.println(json);
 
-		// 13.数组json——>map
+        // 14.数组json——>map
 //		String jsonStr = "{\"bankFlag\":\"1\",\"resultList\":[{\"payChannelName\":\"城银清算支付系统\",\"busiMode\":\"100\",\"payChannel\":\"CBPS\"}]}";
 //		Map<String, String> map = new HashMap<>();
 //		JSONObject jsonObject = JSONObject.parseObject(jsonStr);
@@ -232,61 +241,57 @@ public class FastJsonDemo {
 //				.getString("payChannel");
 //		System.out.println(payChannel);
 
-		// 14.测试JsonArray中抽取相同key的value值组成map(string,array)
-//		Map<String, List<Map<String, String>>> resultMap = new HashMap<>();
-//		List<Map<String, String>> resultList = new ArrayList<>();
-//		Map<String, String> map = new HashMap<String, String>();
-//		map.put("coordX", "10");
-//		map.put("coordY", "20");
-//		map.put("coordZ", "30");
-//		map.put("fruit", "apple");
-//		resultList.add(map);
+        // 15.测试JsonArray中抽取相同key的value值组成map(string,array)
+//        Map<String, List<Map<String, String>>> resultMap = new HashMap<>();
+//        List<Map<String, String>> resultList = new ArrayList<>();
+//        Map<String, String> map = new HashMap<String, String>();
+//        map.put("coordX", "10");
+//        map.put("coordY", "20");
+//        map.put("coordZ", "30");
+//        map.put("fruit", "apple");
+//        resultList.add(map);
 //
-//		Map<String, String> map1 = new HashMap<String, String>();
-//		map1.put("coordX", "40");
-//		map1.put("coordY", "50");
-//		map1.put("coordZ", "60");
-//		map1.put("fruit", "banana");
-//		resultList.add(map1);
-//		
-//		Map<String, String> map2 = new HashMap<String, String>();
-//		map2.put("coordX", "70");
-//		map2.put("coordY", "80");
-//		map2.put("coordZ", "90");
-//		map2.put("fruit", "orange");
-//		resultList.add(map2);
+//        Map<String, String> map1 = new HashMap<String, String>();
+//        map1.put("coordX", "40");
+//        map1.put("coordY", "50");
+//        map1.put("coordZ", "60");
+//        map1.put("fruit", "banana");
+//        resultList.add(map1);
 //
-//		resultMap.put("resultList", resultList);
-//		String json = JSON.toJSONString(resultMap);
-//		System.out.println(json);
+//        Map<String, String> map2 = new HashMap<String, String>();
+//        map2.put("coordX", "70");
+//        map2.put("coordY", "80");
+//        map2.put("coordZ", "90");
+//        map2.put("fruit", "orange");
+//        resultList.add(map2);
 //
-//		JSONObject jsonObject = JSONObject.parseObject(json);
-//		JSONArray jsonArray = JSON.parseArray(jsonObject.getString("resultList"));
+//        resultMap.put("resultList", resultList);
+//        String json = JSON.toJSONString(resultMap);
+//        System.out.println(json);
 //
-//		Map<String, JSONArray> arrayMap = new HashMap<>();
+//        JSONArray jsonArray = JSON.parseArray(JSONObject.parseObject(json).getString("resultList"));
+//        Map<String, JSONArray> arrayMap = new HashMap<>();
+//        Set<String> set = jsonArray.getJSONObject(0).keySet();
+//        String[] keys = new String[set.size()];
+//        set.toArray(keys);
 //
-//		Set<String> set = jsonArray.getJSONObject(0).keySet();
-//		String[] keys = new String[set.size()];
-//		set.toArray(keys);
+//        List<List<String>> lists = new ArrayList<>();
+//        Stream.of(keys).forEach(key -> lists.add(new ArrayList<>()));
 //
-//		List<List<String>> lists = new ArrayList<>();
-//		for (int i = 0; i < keys.length; i++) {
-//			lists.add(new ArrayList<>());
-//		}
+//        for (int i = 0; i < jsonArray.size(); i++) {
+//            for (int j = 0; j < keys.length; j++) {
+//                lists.get(j).add(jsonArray.getJSONObject(i).getString(keys[j]));
+//            }
+//        }
 //
-//		for (int i = 0; i < jsonArray.size(); i++) {
-//			for (int j = 0; j < keys.length; j++) {
-//				lists.get(j).add(jsonArray.getJSONObject(i).getString(keys[j]));
-//			}
-//		}
+//        for (int i = 0; i < keys.length; i++) {
+//            arrayMap.put(keys[i], JSONArray.parseArray(JSON.toJSONString(lists.get(i))));
+//        }
 //
-//		for (int i = 0; i < keys.length; i++) {
-//			arrayMap.put(keys[i], JSONArray.parseArray(JSON.toJSONString(lists.get(i))));
-//		}
-//		System.out.println(arrayMap);
+//        System.out.println(arrayMap);
 
-		// 15.json数组字符串——>按照key组装的数组
-		// [0, 1]|[/home/afa/seal.png, /home/afa/seal1.png]|[0, 10]|[200, 300]|[1,2]|[0.5, 0.8]
+        // 16.json数组字符串——>按照key组装的数组
+        // [0, 1]|[/home/afa/seal.png, /home/afa/seal1.png]|[0, 10]|[200, 300]|[1,2]|[0.5, 0.8]
 //		String str = "[{'page':'0','imgInfo':'/home/afa/seal.png','coordX':'0','coordY':'200','coordType':'1','scaleVal':'0.5'},{'page':'1','imgInfo':'/home/afa/seal1.png','coordX':'10','coordY':'300','coordType':'2','scaleVal':'0.8'}]";
 //		JSONArray array = JSON.parseArray(str);
 //
@@ -308,5 +313,26 @@ public class FastJsonDemo {
 //			sb.append(Arrays.toString(objArray)).append("|");
 //		}
 //		System.out.println(sb);
-	}
+
+        // 17.合并两个JSONArray
+//        Map<String, Object> map = new HashMap<>();
+//        map.put("a", JSON.parseArray("['1','2','3']"));
+//        map.put("b", JSON.parseArray("['4','5','6']"));
+//        JSONArray aArr = (JSONArray) map.get("a");
+//        JSONArray bArr = (JSONArray) map.get("b");
+//        aArr.addAll(bArr);
+
+//        map.put("c",((JSONArray) map.get("a")).addAll((JSONArray) map.get("b")));
+//        System.out.println(map.get("c"));
+
+        // 18.按照节点存放顺序输出
+//        Map<String, String> map = new LinkedHashMap<>();
+//        map.put("id", "10");
+//        map.put("label", "水果");
+//        map.put("children", "香蕉");
+//        String str = JSON.toJSONString(map, SerializerFeature.PrettyFormat);
+//        System.out.println(str);
+
+
+    }
 }
