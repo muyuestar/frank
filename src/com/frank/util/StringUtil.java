@@ -116,6 +116,61 @@ public class StringUtil {
         return str.replaceAll("0*$", "");
     }
 
+    /**
+     * 匹配字符串
+     *
+     * @param str字符串
+     * @return 是否匹配
+     */
+    public static boolean matcherStr(String str) {
+        String regex = "[a-zA-Z]";
+        return Pattern.compile(regex).matcher(str).find();
+    }
+
+    /**
+     * 获取字符串中首个数字下标
+     *
+     * @param str字符串
+     * @return 首个数字下标
+     */
+    private static int getDigitIndex(String str) {
+        int index = -1;
+        for (int i = 0; i < str.length(); i++) {
+            if (Character.isDigit(str.charAt(i))) {
+                index = i;
+                break;
+            }
+        }
+        return index;
+    }
+
+    /**
+     * 含中文的字符串加空格
+     *
+     * @param substr原字符串
+     * @return 加空格字符串
+     */
+    private static String P_StringAddSpace(String substr) {
+        int chineselen = String.valueOf(substr).replaceAll(
+                "[^(\\u4e00-\\u9fa5)|\\！|\\，|\\。|\\（|\\）|\\《|\\》|\\”|\\“|\\？|\\：|\\；|\\【|\\】|\\、|^(\\－)]", "").length();
+        char[] value = new char[substr.length() + chineselen];
+        for (int i = 0, j = 0; i < substr.length(); i++, j++) {
+            if (String.valueOf(substr.charAt(i)).matches(
+                    "[^(\\u4e00-\\u9fa5)|\\！|\\，|\\。|\\（|\\）|\\《|\\》|\\”|\\“|\\？|\\：|\\；|\\【|\\】|\\、|^(\\－)]")) {
+                value[j] = substr.charAt(i);
+                continue;
+            } else if (String.valueOf(substr.charAt(i)).matches("[\\(|\\)|\\,|\\.|\\?|\\-]")) {
+                value[j] = substr.charAt(i);
+                continue;
+            } else {
+                value[j] = substr.charAt(i);
+                value[1 + j] = ' ';
+                j = j + 1;
+            }
+        }
+        return new String(value);
+    }
+
 
     public static void main(String[] args) {
 //		System.out.println(formatStr("123456"));
@@ -135,6 +190,6 @@ public class StringUtil {
 
 //        System.out.println(replaceLeftZero("00001024"));
 
-        System.out.println(StringUtils.indexOfAny((CharSequence)"77311", new String[]{"77311", "77313"}));
+        System.out.println(StringUtils.indexOfAny((CharSequence) "77311", new String[]{"77311", "77313"}));
     }
 }

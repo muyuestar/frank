@@ -64,21 +64,21 @@ public class FastJsonDemo {
 //		System.out.println(map);
 
         // 4.list——>JSONArray
-        List<User> list = Lists.newArrayList();
-        User user = new User();
-        user.setAge("10");
-        user.setName("张三");
-        user.setAddress("浙江杭州");
-        list.add(user);
-
-        User user1 = new User();
-        user1.setAge("12");
-        user1.setName("李四");
-        user1.setAddress("浙江温州");
-        list.add(user1);
-
-        JSONArray jsonArray = JSONArray.parseArray(JSON.toJSONString(list));
-        System.out.println(jsonArray);
+//        List<User> list = Lists.newArrayList();
+//        User user = new User();
+//        user.setAge("10");
+//        user.setName("张三");
+//        user.setAddress("浙江杭州");
+//        list.add(user);
+//
+//        User user1 = new User();
+//        user1.setAge("12");
+//        user1.setName("李四");
+//        user1.setAddress("浙江温州");
+//        list.add(user1);
+//
+//        JSONArray jsonArray = JSONArray.parseArray(JSON.toJSONString(list));
+//        System.out.println(jsonArray);
 
         // 5.JSONArray——>list
 //        List<User> userList = JSONObject.parseArray(jsonArray.toJSONString(), User.class);
@@ -333,6 +333,12 @@ public class FastJsonDemo {
 //        String str = JSON.toJSONString(map, SerializerFeature.PrettyFormat);
 //        System.out.println(str);
 
-
+        // 19.格式化输出对象
+        User user = new User();
+        user.setAge("28");
+        user.setName("李白");
+        user.setAddress("五常");
+        String str = JSON.toJSONString(user, SerializerFeature.PrettyFormat);
+        System.out.println(str);
     }
 }

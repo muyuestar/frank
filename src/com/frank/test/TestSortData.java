@@ -13,7 +13,7 @@ import java.util.*;
  * @author: kst
  * @date: 2023/6/25 17:17
  */
-public class SortData {
+public class TestSortData {
 
     public static void main(String[] args) {
         List<Map<Object, Object>> list = new ArrayList<>();
