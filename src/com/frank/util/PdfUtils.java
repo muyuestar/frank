@@ -9,6 +9,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +32,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
 /**
  * pdf操作类
@@ -197,6 +201,7 @@ public class PdfUtils {
         AcroFields form = stamper.getAcroFields();
         // 设置中文字体
         form.addSubstitutionFont(BaseFont.createFont(fontPath, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED));
+
         for (Map.Entry<String, String> entry : map.entrySet()) {
             // 签名框
             if (entry.getKey().contains("Signature")) {
@@ -218,6 +223,41 @@ public class PdfUtils {
             form.setField(entry.getKey(), entry.getValue(), true);
         }
 
+        // true:不可编辑,false:可编辑
+        stamper.setFormFlattening(true);
+        stamper.close();
+        pdfReader.close();
+    }
+
+    /**
+     * pdf添加表单文字支持多字体
+     *
+     * @param srcPdfPath    源pdf文件路径
+     * @param targetPdfPath 目标pdf文件路径
+     * @param map           map值
+     * @param fontPathOne   本地字体路径1
+     * @param fontPathTwo   本地字体路径2
+     * @throws Exception
+     * @author kst 2024-09-18
+     */
+    public static void pdfAddFormWordsForMultifont(String srcPdfPath, String targetPdfPath, Map<String, String> map,
+                                                   String fontPathOne, String fontPathTwo) throws Exception {
+        PdfReader pdfReader = new PdfReader(srcPdfPath);
+        PdfStamper stamper = new PdfStamper(pdfReader, new FileOutputStream(targetPdfPath));
+        AcroFields form = stamper.getAcroFields();
+
+        // 设置中文多字体
+        BaseFont baseFontOne = BaseFont.createFont(fontPathOne, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+        BaseFont baseFontTwo = BaseFont.createFont(fontPathTwo, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+        ArrayList<BaseFont> substitutionFonts = new ArrayList<>();
+        substitutionFonts.add(baseFontOne);
+        substitutionFonts.add(baseFontTwo);
+        form.setSubstitutionFonts(substitutionFonts);
+
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            // 文本框、复选框、单选框
+            form.setField(entry.getKey(), entry.getValue(), true);
+        }
         // true:不可编辑,false:可编辑
         stamper.setFormFlattening(true);
         stamper.close();
@@ -323,227 +363,23 @@ public class PdfUtils {
         reader.close();
     }
 
-    /**
-     * @Param source 源文件
-     * @Param target 转换后文件
-     * @Description 将PDF转为A4格式
-     * @Date: 2023.02.23
-     **/
-    private static void convert(String source, String target) {
+    public static void pdfToA4(String sourcePdfPath, String targetPdfPath) {
         try {
-            PdfReader pdfReader = new PdfReader(source);
-            Document doc = new Document();
-            PdfWriter writer = PdfWriter.getInstance(doc, new FileOutputStream(target));
-            doc.open();
-            PdfContentByte cb = writer.getDirectContent();
-            for (int i = 1; i <= pdfReader.getNumberOfPages(); i++) {
-                PdfImportedPage page = writer.getImportedPage(pdfReader, i);
-                float width = page.getWidth();
-                float height = page.getHeight();
-                if (height > width) {
-                    //横向
-                    doc.setPageSize(PageSize.A4);
-                    doc.newPage();
-                    //计算比例
-                    float widthScale = getWidthScale(width);
-                    float heightScale = getHeightScale(height);
-                    //addTemplate方法中有6个float类型的参数，是通过二维图像仿射变换得到的
-                    //cb.addTemplate(page, new AffineTransform(widthScale, 0, 0, heightScale,0,0));
-                    //二维图像仿射变换:https://www.cnblogs.com/v2m_/archive/2013/05/09/3070187.html
-                    cb.addTemplate(page, widthScale, 0, 0, heightScale, 0, 0);
-                } else {
-                    //纵向
-                    doc.setPageSize(new com.itextpdf.text.Rectangle(PageSize.A4.getHeight(), PageSize.A4.getWidth()));
-                    doc.newPage();
-                    float widthScale = getWidthScale(height);
-                    float heightScale = getHeightScale(width);
-                    cb.addTemplate(page, widthScale, 0, 0, heightScale, 0, 0);
-                }
+            PDDocument document = PDDocument.load(new File(sourcePdfPath));
+            PDDocument pdDocument = new PDDocument();
+
+            for (PDPage page : document.getPages()) {
+                PDPage pdpage = new PDPage(PDRectangle.A4);
+                pdDocument.addPage(pdpage);
             }
-            doc.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    private static float getWidthScale(float width) {
-        float scale = PageSize.A4.getWidth() / width;
-        return scale;
-    }
-
-    private static float getHeightScale(float height) {
-        float scale = PageSize.A4.getHeight() / height;
-        return scale;
-    }
-
-    public static File pdfToA4(String source, String target) {
-        Document document = new Document(PageSize.A4);
-        File FileA4 = new File(target);
-        try {
-            PdfReader pdfReader = new PdfReader(new File(source).getPath());
-            PdfWriter pdfWriter = PdfWriter.getInstance(document, new FileOutputStream(target));
-            document.open();
-            PdfContentByte cb = pdfWriter.getDirectContent();
-            // 循环PDF的每一页 pdfWriter.getImportedPage(pdfReader, index) idnex从1开始
-            for (int i = 1; i <= pdfReader.getNumberOfPages(); i++) {
-                // 新增一页，不然多页的PDF会重合到一页
-                document.newPage();
-                PdfImportedPage page = pdfWriter.getImportedPage(pdfReader, i);
-                // 计算缩小比例 以最大缩小比例为主
-                // pdfReader.getPageSize(index) index是从1开始不是0
-                float w = PageSize.A4.getWidth() / pdfReader.getPageSize(1).getWidth();
-                float h = PageSize.A4.getHeight() / pdfReader.getPageSize(1).getHeight();
-                float Scale = w > h ? h : w;
-                cb.addTemplate(page, Scale, 0, 0, Scale, 0, 0);
-            }
+            pdDocument.save(new File(targetPdfPath));
+            pdDocument.close();
             document.close();
         } catch (Exception e) {
-            e.printStackTrace();
-        }
-        // 删除原来的文件
-        return FileA4;
-    }
 
-    /**
-     * 自动修改pdf大小为A4大小
-     *
-     * @param srcPdfPath 需要修改的pdf的路径
-     * @param newPdfPath 生成的新的pdf的路径
-     */
-    public static void PdfTest(String srcPdfPath, String newPdfPath) {
-        try {
-            Document document = new Document();
-            PdfWriter pdfWriter = PdfWriter.getInstance(document, new FileOutputStream(newPdfPath));
-            PdfImportedPage page1 = pdfWriter.getImportedPage(new PdfReader(srcPdfPath), 1);
-            if (Image.getInstance(page1).getScaledWidth() > Image.getInstance(page1).getScaledHeight()) {
-                document.setPageSize(PageSize.A4.rotate());
-            } else {
-                document.setPageSize(PageSize.A4);
-            }
-            document.open();
-            PdfReader pdfReader = new PdfReader(srcPdfPath);
-            int n = pdfReader.getNumberOfPages();
-            PdfImportedPage page;
-            PdfImportedPage page2;
-            for (int i = 1; i <= n; i++) {
-                int m = 0;
-                page = pdfWriter.getImportedPage(pdfReader, i);
-                Image image = Image.getInstance(page);
-                if (i != n) {
-                    page2 = pdfWriter.getImportedPage(pdfReader, i + 1);
-                } else {
-                    page2 = pdfWriter.getImportedPage(pdfReader, i);
-                }
-                Image image2 = Image.getInstance(page2);
-                float scaledWidth = image2.getScaledWidth();
-                float scaledHeight = image2.getScaledHeight();
-                System.out.println(i + "--原先图片大小是宽：" + scaledWidth + ",高是:" + scaledHeight);
-                if (scaledWidth > scaledHeight) {
-                    while (scaledWidth > 842 || scaledHeight > 595) {
-                        image.scalePercent(100 - m);
-                        m++;
-                        scaledHeight = image.getScaledHeight();
-                        scaledWidth = image.getScaledWidth();
-                    }
-                    document.setPageSize(PageSize.A4.rotate());
-                    image.setAlignment(Image.ALIGN_CENTER);
-                    document.add(image);
-                    document.newPage();
-                } else {
-                    while (scaledHeight > 842 || scaledWidth > 595) {
-                        image.scalePercent(100 - m);
-                        m++;
-                        scaledHeight = image.getScaledHeight();
-                        scaledWidth = image.getScaledWidth();
-                    }
-                    // image.setAbsolutePosition(0,0);
-                    document.setPageSize(PageSize.A4);
-                    image.setAlignment(Image.ALIGN_CENTER);
-                    document.add(image);
-                    document.newPage();
-                }
-            }
-            document.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (DocumentException e) {
-            e.printStackTrace();
         }
     }
 
-    public static void convertPdf(String srcPdfPath, String newPdfPath) {
-        //加载原 PDF 文件
-        PdfDocument originPdf = new PdfDocument();
-        originPdf.loadFromFile(srcPdfPath);
-
-        //初始化一个新的 PdfDocument 实例
-        PdfDocument newPdf = new PdfDocument();
-
-        //初始化 PdfUnitConvertor 实例
-        PdfUnitConvertor unitCvtr = new PdfUnitConvertor();
-
-        //将自定义大小以英寸为单位转换为points
-        float width = unitCvtr.convertUnits(6.5f, PdfGraphicsUnit.Inch, PdfGraphicsUnit.Point);
-        float height = unitCvtr.convertUnits(8.5f, PdfGraphicsUnit.Inch, PdfGraphicsUnit.Point);
-
-        //从自定义大小创建一个 Dimension2D 实例，然后它将用作新 PDF 的页面大小
-        Dimension2D size = new Dimension();
-        size.setSize(width, height);
-
-        //循环遍历原PDF 中的页面
-        for (int i = 0; i < originPdf.getPages().getCount(); i++) {
-            //将自定义大小的页面添加到新的 PDF 文件
-            PdfPageBase newPage = newPdf.getPages().add(size, new PdfMargins((0)));
-            //创建一个 PdfTextLayout 实例
-            PdfTextLayout layout = new PdfTextLayout();
-            //将文本布局设置为一页（如果未设置内容将不会缩放以适应页面大小）
-            layout.setLayout(PdfLayoutType.One_Page);
-            //根据原 PDF 中的页面创建模板
-            PdfTemplate template = originPdf.getPages().get(i).createTemplate();
-            //在新 PDF 的页面上绘制模板
-            template.draw(newPage, new Point2D.Float(0, 0), layout);
-        }
-
-        //保存结果文档
-        newPdf.saveToFile(newPdfPath);
-    }
-
-    /**
-     * java修改pdf文档页面的宽高
-     * 参数 inPath 修改后的新的绝对路径
-     * 参数 outPath pdf的路径
-     */
-    public static String amendpage(String outPath, String inPath) {
-        //创建PdfDocument对象
-        PdfDocument originalDoc = new PdfDocument();
-        //加载PDF文件
-        originalDoc.loadFromFile(outPath);
-
-        //创建一个新的PdfDocument实例
-        PdfDocument newDoc = new PdfDocument();
-
-        //遍历所有PDF 页面
-        Dimension2D dimension2D = new Dimension();
-        for (int i = 0; i < originalDoc.getPages().getCount(); i++) {
-            PdfPageBase page = originalDoc.getPages().get(i);
-
-            PdfMargins margins = new PdfMargins(0, 0, 0, 0);
-            //设置新文档的页面大小为A4
-            PdfPageBase newPage = newDoc.getPages().add(PdfPageSize.A4, margins);
-            //调整画布，设置内容也根据页面的大小进行缩放
-//            double wScale = (PdfPageSize.A4.getWidth()) / PdfPageSize.A4.getWidth();
-//            double hScale = (PdfPageSize.A4.getHeight()) / PdfPageSize.A4.getHeight();
-            double wScale = PdfPageSize.A4.getHeight() / page.getSize().getWidth();
-            double hScale = PdfPageSize.A4.getWidth() / page.getSize().getHeight();
-            newPage.getCanvas().translateTransform(wScale, hScale);
-            //复制原文档的内容到新文档
-            newPage.getCanvas().drawTemplate(page.createTemplate(), new Point2D.Float());
-            //保存PDF
-            newDoc.saveToFile(inPath);
-        }
-        newDoc.close();
-        return outPath;
-    }
 
     public static void main(String[] args) throws Exception {
         // 1.pdf添加文字
@@ -580,21 +416,21 @@ public class PdfUtils {
 //				"C:/Windows/Fonts/simhei.ttf");
 
         // 2.2 pdf添加表单文字
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("X1", "20230804GS00001");
-        map.put("X2", "国家税务总局浙江省税务局第三税务分局");
-        map.put("X3", "13300910000");
-        map.put("X4", "来来来");
-        map.put("X5", "77878798798");
-        map.put("X6", "古龙");
-        map.put("X7", "6217261571013778111");
-        map.put("X8", "15088379926");
-        map.put("X9", "浙江民泰商业银行股份有限公司杭州钱江新城支行");
-        map.put("X10", "浙江民泰商业银行总行");
-        map.put("X11", "313345400010");
-        map.put("X12", "313331005163");
-        pdfAddFormWords("C:/kang/image/pdfbox/taxpayment.pdf", "C:/kang/image/pdfbox/taxpayment_fb.pdf", map,
-                "C:/Windows/Fonts/simhei.ttf");
+//        Map<String, String> map = new HashMap<String, String>();
+//        map.put("X1", "20230804GS00001");
+//        map.put("X2", "国家税务总局浙江省税务局第三税务分局");
+//        map.put("X3", "13300910000");
+//        map.put("X4", "来来来");
+//        map.put("X5", "77878798798");
+//        map.put("X6", "古龙");
+//        map.put("X7", "6217261571013778111");
+//        map.put("X8", "15088379926");
+//        map.put("X9", "浙江民泰商业银行股份有限公司杭州钱江新城支行");
+//        map.put("X10", "浙江民泰商业银行总行");
+//        map.put("X11", "313345400010");
+//        map.put("X12", "313331005163");
+//        pdfAddFormWords("C:/kang/image/pdfbox/taxpayment.pdf", "C:/kang/image/pdfbox/taxpayment_fb.pdf", map,
+//                "C:/Windows/Fonts/simhei.ttf");
 
         // 3.合并pdf(pdfbox)
 //		mergerPdfByPdfBox(new String[] { "C:/kang/image/pdfbox/sample1.pdf", "C:/kang/image/pdfbox/sample2.pdf" },
@@ -627,5 +463,23 @@ public class PdfUtils {
 //        convertPdf(source, target);
 //        amendpage(source, target);
 //        System.out.println("111");
+
+        // 6.pdf添加表单文字支持多字体
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("X1", "20230804GS00001");
+        map.put("X2", "国家税务总局浙江省税务局第三税务分局");
+        map.put("X3", "13300910000");
+        map.put("X4", "???");
+        map.put("X5", "77878798798");
+        map.put("X6", "古龙");
+        map.put("X7", "6217261571013778111");
+        map.put("X8", "15088379926");
+        map.put("X9", "浙江民泰商业银行股份有限公司杭州钱江新城支行");
+        map.put("X10", "浙江民泰商业银行总行");
+        map.put("X11", "313345400010");
+        map.put("X12", "313331005163");
+        pdfAddFormWordsForMultifont("C:/kang/image/pdfbox/multifont.pdf", "C:/kang/image/pdfbox/multifont_fb.pdf", map,
+                "C:/Windows/Fonts/JinbiaoSong.ttf", "C:/Windows/Fonts/JinbiaoSongExt.ttf");
+        System.out.println("成功");
     }
 }

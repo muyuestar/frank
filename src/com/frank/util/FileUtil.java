@@ -350,9 +350,9 @@ public class FileUtil {
 //		convertHtmlToPdf(srcHtmlPath, destPdfPath);
 
         // 19.文件转base64流
-        String filePath = "C:/kang/image/demo/demo.txt";
-        String fileBase64 = getBase64FromFile(new File(filePath));
-        System.out.println(fileBase64);
+//        String filePath = "C:/kang/image/demo/demo.txt";
+//        String fileBase64 = getBase64FromFile(new File(filePath));
+//        System.out.println(fileBase64);
     }
 
 }

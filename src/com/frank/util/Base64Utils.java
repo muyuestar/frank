@@ -1,6 +1,7 @@
 package com.frank.util;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.FileUtils;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
@@ -8,6 +9,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.List;
 
 public class Base64Utils {
     /**
@@ -109,7 +111,7 @@ public class Base64Utils {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 //		String base64Str = "data:image/jpeg;base64,Z9i6rOgEY8if6VwYBrm0yl21VMGBWT6j9LAFc23w/YEWzC3GjigFElHVYNbIl5oEk7taTw9XME1ZDOU5qAUI/D24ku2w8VBDSyMZ4ei5rWnB4pPckZtiUdq4m3Mg8miYkzcGTOle6uiztEngGGTjMUoG+4G3QXNhGJp4pTYnvE2FLsWqJNMwA7Lbu0Z8Iy6wJw/u+7vjhNmOCr8JF0hF20xkhZDQiO+y5WHUYnwjLrAnD+77u+OE2Y4KvwkXSEXbTGSFkNCI77LlYdRifCMusCcP7vu744TZjgq/CRdIRdtMZIWQ0IjvsuVh1GJ8Iy6wJw/u+7vjhNmOCr8JF0hFFw==";
 //		String imageFilePath = "C:/kang/image/finger.jpg";
 //		System.out.println(base64StrToImg(base64Str, imageFilePath));
@@ -120,7 +122,7 @@ public class Base64Utils {
 //        String str = getImgBase(pngPath);
 //        System.out.println(str);
 
-        String pngPath = "C:/kang/image/base64/1.jpg";
+        String pngPath = "C:/kang/image/zt/1.jpg";
         String str = getImgBase(pngPath);
         System.out.println(str);
 
@@ -128,5 +130,12 @@ public class Base64Utils {
 //		String imageFilePath = "C:/kang/image/demo/signdata.jpg";
 //		System.out.println(base64StrToImg(base64Str, imageFilePath));
 
+//        File file = new File("C:/kang/image/demo.txt");
+//        List<String> lineList = FileUtils.readLines(file, "utf-8");
+//        String base64Str = lineList.get(0);
+//        String imageFilePath = "C:/kang/image/bird.jpg";
+//        System.out.println(base64StrToImg(base64Str, imageFilePath));
+//        String str = getImgBase(imageFilePath);
+//        System.out.println(str);
     }
 }

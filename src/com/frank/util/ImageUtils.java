@@ -539,10 +539,10 @@ public class ImageUtils {
 //		imageAddStringMark(srcImagePath, targerImagePath, str);
 
         // 11.图片连接
-        String[] imagePaths = new String[]{"C:/kang/image/11.jpg", "C:/kang/image/12.jpg"};
-        String destImageFile = "C:/kang/image/dest.jpg";
-        connectImage(imagePaths, destImageFile);
-        System.out.println("连接成功");
+//        String[] imagePaths = new String[]{"C:/kang/image/11.jpg", "C:/kang/image/12.jpg"};
+//        String destImageFile = "C:/kang/image/dest.jpg";
+//        connectImage(imagePaths, destImageFile);
+//        System.out.println("连接成功");
     }
 
 }

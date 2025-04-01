@@ -1,13 +1,13 @@
 package com.frank.util;
 
-import java.util.Arrays;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * 字符串操作类
@@ -171,6 +171,83 @@ public class StringUtil {
         return new String(value);
     }
 
+    // 26个英文字母大小写
+    public static final String LETTER = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    /**
+     * 获取任意位数指定范围随机字母
+     *
+     * @param loopCount 循环次数
+     * @param maxSize   指定大小
+     * @return 返回随机字母
+     */
+    public static String getRandomStr(int loopCount, int maxSize) {
+        String str = "";
+        for (int i = 0; i < loopCount; i++) {
+            int index = (int) (maxSize * Math.random());
+            str += LETTER.substring(index, index + 1);
+        }
+        return str;
+    }
+
+    /**
+     * 比较任一个对象，只要有一个相等，返回true，全部不等，返回false
+     *
+     * <pre>
+     * StringUtil.equalsAny(null ,(CharSequence[])null) = false
+     * StringUtil.equalsAny(null ,null,null) = true
+     * StringUtil.equalsAny(null ,"abc","def") = false
+     * StringUtil.equalsAny("abc",null ,"def") = false
+     * StringUtil.equalsAny("abc","abc" ,"def") = true
+     * StringUtil.equalsAny("abc","ABC" ,"def") = false
+     * </pre>
+     *
+     * @param string        比较对象
+     * @param searchStrings 数组比较对象
+     * @return boolean
+     * @author kst 2019-08-15
+     */
+    public static boolean equalsAny(final CharSequence string,
+                                    final CharSequence... searchStrings) {
+        if (!ArrayUtils.isEmpty(searchStrings)) {
+            for (CharSequence next : searchStrings) {
+                if (StringUtils.equals((String) string, (String) next)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 比较任一个对象，只要有一个相等，返回true，全部不等，返回false
+     *
+     * <pre>
+     * StringUtilEx.equalsAnyIgnoreCase(null ,(CharSequence[])null) = false
+     * StringUtilEx.equalsAnyIgnoreCase(null ,null,null) = true
+     * StringUtilEx.equalsAnyIgnoreCase(null ,"abc","def") = false
+     * StringUtilEx.equalsAnyIgnoreCase("abc",null ,"def") = false
+     * StringUtilEx.equalsAnyIgnoreCase("abc","abc" ,"def") = true
+     * StringUtilEx.equalsAnyIgnoreCase("abc","ABC" ,"def") = true
+     * </pre>
+     *
+     * @param string        比较对象
+     * @param searchStrings 数组比较对象
+     * @return boolean
+     * @author kst 2019-08-15
+     */
+    public static boolean equalsAnyIgnoreCase(final CharSequence string,
+                                              final CharSequence... searchStrings) {
+        if (!ArrayUtils.isEmpty(searchStrings)) {
+            for (CharSequence next : searchStrings) {
+                if (StringUtils
+                        .equalsIgnoreCase((String) string, (String) next)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     public static void main(String[] args) {
 //		System.out.println(formatStr("123456"));
@@ -190,6 +267,28 @@ public class StringUtil {
 
 //        System.out.println(replaceLeftZero("00001024"));
 
-        System.out.println(StringUtils.indexOfAny((CharSequence) "77311", new String[]{"77311", "77313"}));
+//        System.out.println(StringUtils.indexOfAny((CharSequence) "77311", new String[]{"77311", "77313"}));
+
+//        String randomStr = "";
+//        for (int i = 0; i < 100; i++) {
+//            randomStr = getRandomStr(6, 52);
+//            System.out.println(randomStr);
+//            if (randomStr.contains("Z")) {
+//                break;
+//            }
+//        }
+
+//        Map<String, String> map = Maps.newHashMap();
+//        map.put("khmc", "民泰\"银行\"");
+//        map.put("payername", "诸葛\"青云\"");
+//        String str = JSON.toJSONString(map);
+//        str = str.replace("\\", "");
+//        System.out.println(str);
+//        char[] chars = str.toCharArray();
+//        System.out.println(Arrays.toString(chars));
+//        String[] split = str.split("\":\"");
+//        System.out.println(Arrays.toString(split));
+
+
     }
 }
