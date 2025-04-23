@@ -12,6 +12,7 @@ import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.bouncycastle.pqc.math.linearalgebra.ByteUtils;
@@ -36,8 +37,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Demo {
 
     public static void main(String[] args) throws Exception {
-        Map<String,String> map = new HashMap<>();
-        System.out.println(map.containsKey("name"));
+
     }
 
 }
